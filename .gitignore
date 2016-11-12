@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Contains API key
+aplicaciones_informaticas/aplicaciones_informaticas/geo_settings.py

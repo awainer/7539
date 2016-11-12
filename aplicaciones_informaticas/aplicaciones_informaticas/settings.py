@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backend'
+    'geoposition',
+    'backend',
+
 ]
 
 MIDDLEWARE = [
@@ -119,3 +121,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+import  geo_settings 
+GEOPOSITION_GOOGLE_MAPS_API_KEY = geo_settings.api_key
