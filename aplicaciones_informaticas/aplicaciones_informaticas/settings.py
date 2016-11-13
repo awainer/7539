@@ -122,5 +122,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import  geo_settings 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = geo_settings.api_key
