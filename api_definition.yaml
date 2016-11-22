@@ -1,0 +1,219 @@
+swagger: '2.0'
+info:
+  title: API Hospitales
+  description: |
+    API de administración de las guardias de los hospitales de la ciudad, según su especialidad.
+  version: "1.0.0"
+basePath: /v1
+produces:
+  - application/json
+paths:
+  
+  /hospitals/recommendation:
+    post:
+      description: |
+        Devuelve una recomendación de los hospitales a los cuales uno puede asistir, en base a los parámetros enviados por el usuario.
+      parameters:
+        -
+          name: recommendationData
+          in: body
+          required: true
+          schema: 
+            $ref: "#/definitions/RecommendationData"
+      responses:
+        200:
+          description: Colección de hospitales a los cuales asistir.
+          schema: 
+            type: array
+            items: 
+              $ref: "#/definitions/HospitalRecommendation"
+  
+  /hospitals/{idHospital}/queue/{idQueue}/patients:
+    post:
+      description: |
+        Agrega un paciente a la cola de espera, según su gravedad.
+      parameters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+        -
+          name: idQueue
+          in: path
+          description: ID de la cola.
+          required: true
+          type: integer
+        -
+          name: triageScale
+          in: body
+          required: true
+          schema: 
+            $ref: "#/definitions/TriageScale"
+      responses:
+        201:
+          description: Paciente agregado a la cola.
+          schema: 
+            $ref: "#/definitions/Patient"
+          examples:
+            application/json:
+              id: 1
+              triageScale: 1
+              waitTime: 60
+              startTime: "2011-08-30T13:22:53.108Z"
+              endTime: ""
+
+  /hospitals/{idHospital}/queues/{idQueue}/patients/{idPatient}:
+    get:
+      description: |
+        Devuelve la información del paciente agregado a una cola.
+      parameters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+        -
+          name: idQueue
+          in: path
+          description: ID de la cola.
+          required: true
+          type: integer
+        -
+          name: idPatient
+          in: path
+          description: ID del paciente en la cola.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Paciente agregado a la cola.
+          schema: 
+            $ref: "#/definitions/Patient"
+          examples:
+            application/json:
+              id: 1
+              triageScale: 1
+              waitTime: 60
+              startTime: "2011-08-30T13:22:53.108Z"
+              endTime: ""
+    delete:
+      description: |
+        Elimina un paciente de la cola.
+      parameters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+        -
+          name: idQueue
+          in: path
+          description: ID de la cola.
+          required: true
+          type: integer
+        -
+          name: idPatient
+          in: path
+          description: ID del paciente en la cola.
+          required: true
+          type: integer
+        -  
+          name: reason
+          in: body
+          description: Razón por la cual el paciente fue eliminado de la cola.
+          required: true
+          schema: 
+            $ref: "#/definitions/DeleteReason"
+      responses:
+        204:
+          description: Paciente removido.
+
+definitions:
+
+  Specialty:
+    type: string
+    description: Especialidades disponibles de guardia en el sistema.
+    enum: ["Clínica", "Pediatría", "Odontología", "Cirujía", "Traumatología", "Oftalmología"]
+
+  TriageScale:
+    type: integer
+    enum: [1,2,3,4,5]
+    description: |
+      Gravedad del paciente, definido según Triage.
+      Posibles valores:
+      1: Atención inmediata (0 minutos de espera).
+      2: Atención muy urgente (10 minutos de espera).
+      3: Atención urgente (60 minutos de espera).
+      4: Atención normal (120 minutos de espera).
+      5: Atención no urgente (240 minutos de espera).
+
+  DeleteReason:
+    type: integer
+    enum: [1,2,3]
+    description: |
+      Razón de la baja de un paciente.
+      Posibles valores:
+        1: Fue atendido.
+        2: Fue recategorizado de especialidad.
+        3: Se retiró sin ser atendido.
+
+  RecommendationData:
+    type: object
+    description: Información necesaria para la recomendación.
+    properties:
+      specialty:
+        $ref: '#/definitions/Specialty'
+      triageScale:
+        $ref: '#/definitions/TriageScale'
+      geo:
+        type: string
+
+  HospitalRecommendation:
+    type: object
+    description: Informacióon de un hospital en base a una recomendacióon.
+    properties:
+      name:
+        type: string
+      address:
+        type: string
+      waitTime:
+        description: Tiempo de espera estimado de atención (en minutos).
+        type: string
+      travelTime:
+        description: Tiempo de viaje hasta llegar al hospital (en minutos).
+        type: string
+      patientsWaiting:
+        description: Cantidad de gente en la cola esperando a ser atendida.
+        type: integer
+      distance:
+        description: Distancia hacia el hospital (en metros).
+        type: string
+      ranking:
+        description: Valor numérico de la popularidad del hospital, del 1 al 5.
+        type: number
+        format: double
+  
+  Patient:
+    type: object
+    description: Un paciente de la cola.
+    properties:
+      id:
+        description: ID del paciente en el sistema.
+        type: number
+      triageScale:
+        $ref: "#/definitions/TriageScale"
+      waitTime:
+        description: Tiempo de espera estimado de atención (en minutos).
+        type: integer
+      startTime:
+        description: Tiempo de entrada del paciente al sistema.
+        type: string
+        format: date-time
+      endTime:
+        description: Tiempo de salida del paciente del sistema.
+        type: string
+        format: date-time
