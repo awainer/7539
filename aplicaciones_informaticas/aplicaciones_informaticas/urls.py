@@ -13,11 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url,include
+from rest_framework import routers
 from django.contrib import admin
+from backend import views
 
 admin.autodiscover()
 
+
+router = routers.DefaultRouter()
+router.register(r'healthcenters', views.HealthCenterViewSet)
+router.register(r'queues', views.AtentionQueueViewSet)
+
+
 urlpatterns = [
+    url(r'^api/v1/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^api/v1/healthcenters/(?P<hc_id>[-\w]+)/queues/(?P<queue_id>\d+)$', views.AtentionQueueViewSet.as_view({'get': 'get_one_for_hc'})),
+    url(r'^api/v1/healthcenters/(?P<hc_id>[-\w]+)/queues/?$', views.AtentionQueueViewSet.as_view({'get': 'get_all_for_hc'})),
+#    url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework'))
 ]
