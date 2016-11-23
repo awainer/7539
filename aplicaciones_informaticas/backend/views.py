@@ -62,5 +62,32 @@ class AtentionQueueViewSet(viewsets.ModelViewSet):
         serializer = PatientSerializer(patient)
         return Response(serializer.data, status.HTTP_201_CREATED)
 
+    def get_all_patients(self, request, hc_id=None, queue_id=None):
+        print(queue_id)
+
+        queue = AtentionQueue.objects.get(pk=int(queue_id))
+
+        patients = queue.get_all_patients()
+
+        serializer = PatientSerializer(patients, many=True)
+        print(patients)
+        return Response(serializer.data)
+
     def get_patient(self, request,hc_id=None, queue_id=None, patient_id=None):
-        raise Exception("not implemented")
+        queue = AtentionQueue.objects.get(pk=int(queue_id))
+        try:
+            patient = queue.get_patient(patient_id)
+            serializer = PatientSerializer(patient)
+            return Response(serializer.data, status.HTTP_201_CREATED)
+        except:
+            return Response(None,status.HTTP_404_NOT_FOUND)
+
+    def delete_patient(self, request,hc_id=None, queue_id=None, patient_id=None):
+        queue = AtentionQueue.objects.get(pk=int(queue_id))
+        try:
+            patient = queue.get_patient(patient_id)
+            patient.delete()
+            serializer = PatientSerializer(patient)
+            return Response('{"deleted": true }', status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None,status.HTTP_404_NOT_FOUND)

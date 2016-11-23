@@ -32,8 +32,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/(?P<queue_id>\d+)$', views.AtentionQueueViewSet.as_view({'get': 'get_one_for_hc'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/?$', views.AtentionQueueViewSet.as_view({'get': 'get_all_for_hc'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?$',views.AtentionQueueViewSet.as_view({'post': 'add_patient'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?$',views.AtentionQueueViewSet.as_view({'post': 'add_patient', 'get': 'get_all_patients'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?/(?P<patient_id>\d+)$',
-                        views.AtentionQueueViewSet.as_view({'get': 'get_patient'})),
+                        views.AtentionQueueViewSet.as_view({'get': 'get_patient','delete':'delete_patient'})),
 #    url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework'))
 ]

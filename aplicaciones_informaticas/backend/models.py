@@ -37,13 +37,19 @@ triage_levels = (
       )
 
 specialties = (
-        ('1', 'Clínica'),
-        ('2', 'Pediatría'),
-        ('3', 'Odontología'),
-        ('4', 'Cirujía'),
-        ('5', 'Traumatología'),
-        ('6', 'Oftalmología')
-        )
+    ('1', 'Clínica'),
+    ('2', 'Pediatría'),
+    ('3', 'Odontología'),
+    ('4', 'Cirujía'),
+    ('5', 'Traumatología'),
+    ('6', 'Oftalmología')
+    )
+
+delete_reason = (
+    ('1','Fue atendido.'),
+    ('2','Fue recategorizado de especialidad.'),
+    ('3','Se retiró sin ser atendido.')
+)
 
 class AtentionQueue(models.Model):
     health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE, related_name='queues')
@@ -61,7 +67,10 @@ class AtentionQueue(models.Model):
         return str(self.health_center) + ' - ' + str(self.specialty) + ' - ' + str(self.description)
 
     def get_all_patients(self):
-        return AtentionQueue.patient_set()
+        return Patient.objects.filter(queue=self.id)
+
+    def get_patient(self,patient_id):
+        return Patient.objects.filter(queue=self.id).get(pk=patient_id)
 
     def get_average_wait_time(self):
         return self.current_size * float(self.average_attention_time) / self.attention_channels
@@ -71,6 +80,6 @@ class Patient(models.Model):
     waittime = models.IntegerField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField
-    current_queue = models.ForeignKey(AtentionQueue, related_name='queue')
+    queue = models.ForeignKey(AtentionQueue)
     def __str__(self):
         return str(self.id) + ' - Start:' + str(self.start_time)
