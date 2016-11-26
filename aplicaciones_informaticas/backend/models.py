@@ -18,6 +18,11 @@ class HealthCenter(models.Model):
     def __str__(self):
         return self.name
 
+    def setDefaultHealthCenter(self):
+        self.name = "Hospital Central Bs As"
+        self.address = "Corrientes 2856"
+        self.phone = "497-4156"
+        self.set_position(-34.604546, -58.40595)
 
 
 #class Specialty(models.Model):
@@ -76,10 +81,55 @@ class AtentionQueue(models.Model):
         return self.current_size * float(self.average_attention_time) / self.attention_channels
 
 class Patient(models.Model):
-    triage_scale = models.CharField(max_length=1, choices=triage_levels)
-    waittime = models.IntegerField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField
+    triageScale = models.CharField(max_length=1, choices=triage_levels)
+    waitTime = models.IntegerField()
+    startTime = models.DateTimeField()
+    endTime = models.DateTimeField
     queue = models.ForeignKey(AtentionQueue)
     def __str__(self):
-        return str(self.id) + ' - Start:' + str(self.start_time)
+        return str(self.id) + ' - Start:' + str(self.startTime)
+
+class RecommendationData(models.Model):
+    '''
+          name:
+        type: string
+      address:
+        type: string
+      waitTime:
+        description: Tiempo de espera estimado de atención (en minutos).
+        type: string
+      travelTime:
+        description: Tiempo de viaje hasta llegar al hospital (en minutos).
+        type: string
+      patientsWaiting:
+        description: Cantidad de gente en la cola esperando a ser atendida.
+        type: integer
+      distance:
+        description: Distancia hacia el hospital (en metros).
+        type: string
+      ranking:
+        description: Valor numérico de la popularidad del hospital, del 1 al 5.
+        type: number
+        format: double
+    '''
+
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+    waitTime = models.PositiveIntegerField(default=0)
+    travelTime= models.PositiveIntegerField(default=0)
+    patientsWaiting = models.PositiveIntegerField(default=0)
+    distance = models.PositiveIntegerField(default=0)
+    ranking = models.FloatField()
+
+
+
+
+
+class RecommendationEngine(models.Model):
+
+    def get_random_recommendation():
+        rec1 = RecommendationData(name="foo",address="bar", travelTime=10, patientsWaiting=5, distance=4, ranking=1.8)
+        rec2 = RecommendationData(name="asdasd",address="fasdasdsad", travelTime=100, patientsWaiting=5, distance=4, ranking=2.8)
+        return [rec1,rec2]
+
+

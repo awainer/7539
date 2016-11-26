@@ -18,3 +18,10 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
+
+class RecommendationDataSerializer(serializers.ModelSerializer):
+    #healthcenter = serializers.PrimaryKeyRelatedField(read_only=True)
+    healthcenter = HealthCenterSerializer(read_only=True)
+    class Meta:
+        model = RecommendationData
+        fields = '__all__'

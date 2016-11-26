@@ -91,3 +91,15 @@ class AtentionQueueViewSet(viewsets.ModelViewSet):
             return Response('{"deleted": true }', status.HTTP_204_NO_CONTENT)
         except:
             return Response(None,status.HTTP_404_NOT_FOUND)
+
+
+
+# curl  -v -XPOST  -d {}  http://localhost:8000/api/v1/hospitals/recommendation
+class RecommendationEngineViewSet(viewsets.ModelViewSet):
+    def get_recommendation(self, request):
+        json_data = json.loads(request.body.decode('utf-8'))
+        recommendation_list = []
+        for recommendation in RecommendationEngine.get_random_recommendation():
+            recommendation_serializer = RecommendationDataSerializer(recommendation)
+            recommendation_list.append(recommendation_serializer.data)
+        return Response(recommendation_list)
