@@ -1,0 +1,5 @@
+django
+googlemaps
+djangorestframework
+markdown
+django-filter

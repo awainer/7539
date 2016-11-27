@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 import json
 import datetime
+import dateutil.parser
 # Create your views here.
 
 from rest_framework import viewsets,generics
@@ -83,12 +84,27 @@ class AtentionQueueViewSet(viewsets.ModelViewSet):
             return Response(None,status.HTTP_404_NOT_FOUND)
 
     def delete_patient(self, request,hc_id=None, queue_id=None, patient_id=None):
-        queue = AtentionQueue.objects.get(pk=int(queue_id))
+
+        json_data = json.loads(request.body.decode('utf-8'))
+
         try:
+            queue = AtentionQueue.objects.get(pk=int(queue_id))
             patient = queue.get_patient(patient_id)
-            patient.delete()
-            serializer = PatientSerializer(patient)
-            return Response('{"deleted": true }', status.HTTP_204_NO_CONTENT)
+            health_center = HealthCenter.objects.get(pk=hc_id)
+            delete_reason = DeleteReason.objects.get(pk = json_data['reason'])
+            startTime = patient.startTime
+            endTime = datetime.datetime.now()
+
+            atention_record = AttentionRecord(health_center=health_center,
+                                              queue=queue,
+                                              patient=patient,
+                                              reason=delete_reason,
+                                              startTime=startTime,
+                                              endTime=endTime,
+                                              triageScale=patient.triageScale)
+            atention_record
+            patient.remove_from_queue()
+
         except:
             return Response(None,status.HTTP_404_NOT_FOUND)
 
