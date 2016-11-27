@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+import json
 from django.db import models
 from geoposition.fields import GeopositionField
 from decimal import Decimal
@@ -69,7 +69,9 @@ class AtentionQueue(models.Model):
         priority_queues[priority[0]] = deque()
 
     def __str__(self):
-        return str(self.health_center) + ' - ' + str(self.specialty) + ' - ' + str(self.description)
+        return json.dumps({'id': self.id,
+                           'description': self.description})
+        #return '{ "id":' + str(self.id) + ', "description: "' + str(self.health_center) + ' - ' + str(self.specialty) + ' - ' + str(self.description) + '"}'
 
     def get_all_patients(self):
         return Patient.objects.filter(queue=self.id)

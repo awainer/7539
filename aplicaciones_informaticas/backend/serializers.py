@@ -4,15 +4,19 @@ from rest_framework import serializers
 
 #class HealthCenterSerializer(serializers.HyperlinkedModelSerializer):
 
-class HealthCenterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HealthCenter
-        fields = ('id','name','address','position','queues')
+
 
 class AtentionQueueSerializer(serializers.ModelSerializer):
     class Meta:
         model = AtentionQueue
         fields = ('id','specialty','current_size','description')
+
+class HealthCenterSerializer(serializers.ModelSerializer):
+    #queues = serializers.PrimaryKeyRelatedField(read_only=True,many=True)
+    queues = serializers.StringRelatedField(read_only=True, many=True)
+    class Meta:
+        model = HealthCenter
+        fields = ('id','name','address','position','queues')
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
