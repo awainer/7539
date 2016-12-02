@@ -13,7 +13,7 @@ from backend.serializers import *
 from rest_framework import serializers
 #from aplicaciones_informaticas.backend.serializers import *
 from backend.models import *
-
+from django.http import HttpResponse, HttpResponseNotFound
 
 class HealthCenterViewSet(viewsets.ModelViewSet):
     queryset = HealthCenter.objects.all()
@@ -114,8 +114,13 @@ class AtentionQueueViewSet(viewsets.ModelViewSet):
 class RecommendationEngineViewSet(viewsets.ModelViewSet):
     def get_recommendation(self, request):
         json_data = json.loads(request.body.decode('utf-8'))
+        lat = json_data['latitude']
+        long = json_data['longitude']
+        print(json_data)
         recommendation_list = []
-        for recommendation in RecommendationEngine.get_random_recommendation():
+        for recommendation in RecommendationEngine.get_all_recommendations(lat,long):
             recommendation_serializer = RecommendationDataSerializer(recommendation)
             recommendation_list.append(recommendation_serializer.data)
         return Response(recommendation_list)
+    
+  

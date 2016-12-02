@@ -3,7 +3,7 @@ import json
 from django.db import models
 from geoposition.fields import GeopositionField
 from decimal import Decimal
-
+from backend import geo_distance
 from collections import  deque
 
 # Create your models here.
@@ -12,6 +12,8 @@ class HealthCenter(models.Model):
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     position = GeopositionField()
+    ranking = models.IntegerField()
+    
 
     def set_position(self,x,y):
         position = GeopositionField(Decimal(x), Decimal(y))
@@ -26,12 +28,12 @@ class HealthCenter(models.Model):
         self.set_position(-34.604546, -58.40595)
 
 
-#class Specialty(models.Model):
-#    name = models.CharField(max_length=255)
-#    def __str__(self):
-#        return self.name
-#    class Meta():
-#        verbose_name_plural = "Specialties"
+class Specialty(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+    class Meta():
+        verbose_name_plural = "Specialties"
 
 
 class TriageScaleLevel(models.Model):
@@ -40,18 +42,9 @@ class TriageScaleLevel(models.Model):
     def __str__(self):
         return "%s - %s minutos de espera" % (self.id,self.max_wait_in_minutes)
 
-specialties = (
-    ('1', 'Clínica'),
-    ('2', 'Pediatría'),
-    ('3', 'Odontología'),
-    ('4', 'Cirujía'),
-    ('5', 'Traumatología'),
-    ('6', 'Oftalmología')
-    )
-
 class AtentionQueue(models.Model):
     health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE, related_name='queues')
-    specialty  =  models.CharField(max_length=1, choices=specialties)
+    specialty  =  models.ForeignKey(Specialty)
     current_size = models.PositiveIntegerField(default=0)
     average_attention_time = models.PositiveIntegerField(default=600)
     attention_channels = models.PositiveIntegerField(default=1)
@@ -64,10 +57,13 @@ class AtentionQueue(models.Model):
 
     def get_all_patients(self):
         return Patient.objects.filter(queue=self.id)
-
+    
+    def size(self): 
+        return len(Patient.objects.filter(queue=self.id))
+    
     def get_patient(self,patient_id):
         return Patient.objects.filter(queue=self.id).get(pk=patient_id)
-
+    # TODO: esto no deberia depende de la triagescale?
     def get_average_wait_time(self):
         return self.current_size * float(self.average_attention_time) / self.attention_channels
 
@@ -121,6 +117,24 @@ class RecommendationData(models.Model):
 
 
 class RecommendationEngine(models.Model):
+    def get_all_recommendations(latitude, longitude):
+        result = []
+        gd = geo_distance.GeoDistance()
+        for queue in AtentionQueue.objects.all():
+            healthcenter = queue.health_center
+            travel_time, travel_distance = gd.get_travel_time_and_distance((latitude,longitude), 
+                                                                           (float(healthcenter.position.latitude), float(healthcenter.position.longitude)) )
+
+            recdata = RecommendationData(name = healthcenter.name,
+                                         address = healthcenter.address,
+                                         waitTime = queue.get_average_wait_time(),
+                                         travelTime = travel_time,
+                                         patientsWaiting = queue.size(),
+                                         distance= travel_distance,
+                                         ranking = healthcenter.ranking )
+            result.append(recdata)
+        return result        
+        
 
     def get_random_recommendation():
         rec1 = RecommendationData(name="foo",address="bar", travelTime=10, patientsWaiting=5, distance=4, ranking=1.8)
