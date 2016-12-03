@@ -1,3 +1,5 @@
 django
 django-geoposition
 googlemaps
+djangorestframework
+dateutils

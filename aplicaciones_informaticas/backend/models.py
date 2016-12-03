@@ -4,19 +4,19 @@ from django.db import models
 from geoposition.fields import GeopositionField
 from decimal import Decimal
 from backend import geo_distance
-from collections import  deque
+
 
 # Create your models here.
+
 class HealthCenter(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     position = GeopositionField()
     ranking = models.IntegerField()
-    
 
-    def set_position(self,x,y):
-        position = GeopositionField(Decimal(x), Decimal(y))
+    def set_position(self, x, y):
+        self.position = GeopositionField(Decimal(x), Decimal(y))
 
     def __str__(self):
         return self.name
@@ -30,8 +30,10 @@ class HealthCenter(models.Model):
 
 class Specialty(models.Model):
     name = models.CharField(max_length=255)
+
     def __str__(self):
         return self.name
+
     class Meta():
         verbose_name_plural = "Specialties"
 
@@ -39,46 +41,57 @@ class Specialty(models.Model):
 class TriageScaleLevel(models.Model):
     description = models.CharField(max_length=40)
     max_wait_in_minutes = models.PositiveIntegerField(default=0)
+
     def __str__(self):
-        return "%s - %s minutos de espera" % (self.id,self.max_wait_in_minutes)
+        return "%s - %s minutos de espera" % (self.id, self.max_wait_in_minutes)
+
 
 class AtentionQueue(models.Model):
-    health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE, related_name='queues')
-    specialty  =  models.ForeignKey(Specialty)
-    current_size = models.PositiveIntegerField(default=0)
+    health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE,
+                    related_name='queues')
+    specialty = models.ForeignKey(Specialty)
     average_attention_time = models.PositiveIntegerField(default=600)
     attention_channels = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return json.dumps({'id': self.id,
-                           'description': self.description})
-        #return '{ "id":' + str(self.id) + ', "description: "' + str(self.health_center) + ' - ' + str(self.specialty) + ' - ' + str(self.description) + '"}'
+        return self.description
 
     def get_all_patients(self):
         return Patient.objects.filter(queue=self.id)
-    
-    def size(self): 
+
+    def size(self):
         return len(Patient.objects.filter(queue=self.id))
-    
-    def get_patient(self,patient_id):
+
+    def get_patient(self, patient_id):
         return Patient.objects.filter(queue=self.id).get(pk=patient_id)
-    # TODO: esto no deberia depende de la triagescale?
-    def get_average_wait_time(self):
-        return self.current_size * float(self.average_attention_time) / self.attention_channels
+
+    def get_average_wait_time(self, triage_scale=None):
+        if not triage_scale:
+            patients_before = len(self.patients.all())
+        else:
+            patients_before = 0
+            for patient in self.patients.all():
+                if patient.triaceScale.max_wait_in_minutes <= triage_scale.max_wait_in_minutes:
+                    patients_before += 1
+
+        return self.patients_before * float(self.average_attention_time) / self.attention_channels
+
 
 class Patient(models.Model):
     triageScale = models.ForeignKey(TriageScaleLevel)
     waitTime = models.IntegerField()
     startTime = models.DateTimeField()
     endTime = models.DateTimeField
-    queue = models.ForeignKey(AtentionQueue)
+    queue = models.ForeignKey(AtentionQueue, related_name='patients')
+
     def __str__(self):
         return str(self.id) + ' - Start:' + str(self.startTime)
 
     def remove_from_queue(self):
-        self.queue = None;
+        self.queue = None
         self.save()
+
 
 class RecommendationData(models.Model):
     '''
@@ -107,22 +120,20 @@ class RecommendationData(models.Model):
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=50)
     waitTime = models.PositiveIntegerField(default=0)
-    travelTime= models.PositiveIntegerField(default=0)
+    travelTime = models.PositiveIntegerField(default=0)
     patientsWaiting = models.PositiveIntegerField(default=0)
     distance = models.PositiveIntegerField(default=0)
     ranking = models.FloatField()
 
 
-
-
-
 class RecommendationEngine(models.Model):
+
     def get_all_recommendations(latitude, longitude):
         result = []
         gd = geo_distance.GeoDistance()
         for queue in AtentionQueue.objects.all():
             healthcenter = queue.health_center
-            travel_time, travel_distance = gd.get_travel_time_and_distance((latitude,longitude), 
+            travel_time, travel_distance = gd.get_travel_time_and_distance((latitude,longitude),
                                                                            (float(healthcenter.position.latitude), float(healthcenter.position.longitude)) )
 
             recdata = RecommendationData(name = healthcenter.name,
@@ -133,13 +144,15 @@ class RecommendationEngine(models.Model):
                                          distance= travel_distance,
                                          ranking = healthcenter.ranking )
             result.append(recdata)
-        return result        
-        
+        return result
 
     def get_random_recommendation():
-        rec1 = RecommendationData(name="foo",address="bar", travelTime=10, patientsWaiting=5, distance=4, ranking=1.8)
-        rec2 = RecommendationData(name="asdasd",address="fasdasdsad", travelTime=100, patientsWaiting=5, distance=4, ranking=2.8)
+        rec1 = RecommendationData(name="foo",address="bar",
+         travelTime=10, patientsWaiting=5, distance=4, ranking=1.8)
+        rec2 = RecommendationData(name="asdasd",address="fasdasdsad",
+        travelTime=100, patientsWaiting=5, distance=4, ranking=2.8)
         return [rec1,rec2]
+
 
 class DeleteReason(models.Model):
     description = models.CharField(max_length=80)
