@@ -19,6 +19,11 @@ class HealthCenterViewSet(viewsets.ModelViewSet):
         serializer = HealthCenterSerializer(hc)
         return Response(serializer.data)
 
+    def rate(self, request, hc_id=None):
+        json_data = json.loads(request.body.decode('utf-8'))
+        hc = HealthCenter.objects.get(pk=hc_id)
+        hc.rate(json_data['rating'])
+        return Response({"success": True})
 
 class AtentionQueueViewSet(viewsets.ModelViewSet):
     queryset = AtentionQueue.objects.all()

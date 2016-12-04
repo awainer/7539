@@ -10,10 +10,11 @@ class AtentionQueueSerializer(serializers.ModelSerializer):
 
 class HealthCenterSerializer(serializers.ModelSerializer):
     queues = serializers.StringRelatedField(read_only=True, many=True)
+    ranking = serializers.ReadOnlyField(source='get_ranking')
 
     class Meta:
         model = HealthCenter
-        fields = ('id', 'name', 'address', 'position', 'queues')
+        fields = ('id', 'name', 'address', 'position', 'queues','ranking')
 
 
 class PatientSerializer(serializers.ModelSerializer):

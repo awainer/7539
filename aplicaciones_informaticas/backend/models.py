@@ -11,19 +11,25 @@ class HealthCenter(models.Model):
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     position = GeopositionField()
-    ranking = models.IntegerField()
+    ratings = models.IntegerField()
+    score = models.IntegerField()
 
     def set_position(self, x, y):
         self.position = GeopositionField(Decimal(x), Decimal(y))
 
+    def get_ranking(self):
+        if self.ratings == 0:
+            return -1
+
+        return float(self.score) / self.ratings
+
+    def rate(self, rate):
+        self.score += rate
+        self.ratings += 1
+        self.save()
+
     def __str__(self):
         return self.name
-
-    def setDefaultHealthCenter(self):
-        self.name = "Hospital Central Bs As"
-        self.address = "Corrientes 2856"
-        self.phone = "497-4156"
-        self.set_position(-34.604546, -58.40595)
 
 
 class Specialty(models.Model):
@@ -166,7 +172,7 @@ class RecommendationEngine(models.Model):
                                      travelTime=travel_time,
                                      patientsWaiting=queue.size(max_triage_scale=triage_scale),
                                      distance=travel_distance,
-                                     ranking=healthcenter.ranking,
+                                     ranking=healthcenter.get_ranking(),
                                      sector=str(queue))
         return recdata
 
@@ -197,3 +203,6 @@ class AttentionRecord(models.Model):
 
     class Meta():
         verbose_name_plural = "Atention records"
+
+    def __str__(self):
+        return '%s - %s %s %s' % (self.health_center, self.queue, self.reason, self.waitTime)

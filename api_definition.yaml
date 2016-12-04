@@ -8,7 +8,25 @@ basePath: /v1
 produces:
   - application/json
 paths:
-  
+
+  /hospitals/{idHospital}/rank
+  post:
+      description: |
+        Califica la atención recibida en un centro de salud.
+      parameters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+        -
+          name: rating
+          in: body
+          description: calificación otorgada.
+          required: true
+          type: integer
+
   /hospitals/recommendation:
     post:
       description: |
@@ -18,16 +36,16 @@ paths:
           name: recommendationData
           in: body
           required: true
-          schema: 
+          schema:
             $ref: "#/definitions/RecommendationData"
       responses:
         200:
           description: Colección de hospitales a los cuales asistir.
-          schema: 
+          schema:
             type: array
-            items: 
+            items:
               $ref: "#/definitions/HospitalRecommendation"
-  
+
   /hospitals/{idHospital}/queue/{idQueue}/patients:
     post:
       description: |
@@ -49,12 +67,12 @@ paths:
           name: triageScale
           in: body
           required: true
-          schema: 
+          schema:
             $ref: "#/definitions/TriageScale"
       responses:
         201:
           description: Paciente agregado a la cola.
-          schema: 
+          schema:
             $ref: "#/definitions/Patient"
           examples:
             application/json:
@@ -90,7 +108,7 @@ paths:
       responses:
         200:
           description: Paciente agregado a la cola.
-          schema: 
+          schema:
             $ref: "#/definitions/Patient"
           examples:
             application/json:
@@ -121,12 +139,12 @@ paths:
           description: ID del paciente en la cola.
           required: true
           type: integer
-        -  
+        -
           name: reason
           in: body
           description: Razón por la cual el paciente fue eliminado de la cola.
           required: true
-          schema: 
+          schema:
             $ref: "#/definitions/DeleteReason"
       responses:
         204:
@@ -196,7 +214,7 @@ definitions:
         description: Valor numérico de la popularidad del hospital, del 1 al 5.
         type: number
         format: double
-  
+
   Patient:
     type: object
     description: Un paciente de la cola.
