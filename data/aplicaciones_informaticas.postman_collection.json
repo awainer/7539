@@ -1,0 +1,133 @@
+{
+	"variables": [],
+	"info": {
+		"name": "aplicaciones_informaticas",
+		"_postman_id": "d6d7665a-de62-c7f5-be5c-0a07b62a22b5",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get recommendation pediatria",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/recommendation",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n   \"latitude\": -34.617599,\n   \"longitude\": -58.368157,\n   \"specialty\": 3\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Nuevo paciente en Garrahan",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"triageScale\": 4\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Pacientes en una cola",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Paciente en una cola",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients/21",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete patient",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients/37",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"reason\": 1}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get all healthcenters",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/healthcenters",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Rate",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/38/rate",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"rating\": 3}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
