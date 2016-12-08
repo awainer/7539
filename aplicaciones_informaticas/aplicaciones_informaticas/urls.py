@@ -39,3 +39,4 @@ urlpatterns = [
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate', views.HealthCenterViewSet.as_view({'post':'rate'}))
 #    url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+

@@ -3,9 +3,13 @@ from rest_framework import serializers
 
 
 class AtentionQueueSerializer(serializers.ModelSerializer):
+    wait_time = serializers.ReadOnlyField(source='get_average_wait_time')
+    size = serializers.ReadOnlyField()
+
     class Meta:
         model = AtentionQueue
-        fields = ('id', 'specialty', 'current_size', 'description')
+        fields = ('id', 'specialty', 'description', 'health_center', 'wait_time', 'size', 'atention_count',
+        'atention_time_total')
 
 
 class HealthCenterSerializer(serializers.ModelSerializer):
@@ -14,7 +18,7 @@ class HealthCenterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HealthCenter
-        fields = ('id', 'name', 'address', 'position', 'queues','ranking')
+        fields = ('id', 'name', 'address', 'position', 'queues', 'ranking')
 
 
 class PatientSerializer(serializers.ModelSerializer):

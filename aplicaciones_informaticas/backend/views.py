@@ -9,6 +9,7 @@ from backend.serializers import *
 from backend.models import *
 from django.utils import timezone
 
+
 class HealthCenterViewSet(viewsets.ModelViewSet):
     queryset = HealthCenter.objects.all()
     serializer_class = HealthCenterSerializer
@@ -24,6 +25,7 @@ class HealthCenterViewSet(viewsets.ModelViewSet):
         hc = HealthCenter.objects.get(pk=hc_id)
         hc.rate(json_data['rating'])
         return Response({"success": True})
+
 
 class AtentionQueueViewSet(viewsets.ModelViewSet):
     queryset = AtentionQueue.objects.all()
@@ -88,6 +90,8 @@ class AtentionQueueViewSet(viewsets.ModelViewSet):
                                               endTime=endTime,
                                               waitTime=waitTime,
                                               triageScale=patient.triageScale)
+            if delete_reason.id != 3:
+                queue.update_atention_time(waitTime)
             atention_record.save()
             patient.remove_from_queue()
             serializer = AtentionRecordSerializer(atention_record)

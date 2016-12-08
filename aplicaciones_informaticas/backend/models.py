@@ -54,7 +54,8 @@ class AtentionQueue(models.Model):
     health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE,
                     related_name='queues')
     specialty = models.ForeignKey(Specialty)
-    average_attention_time = models.PositiveIntegerField(default=600)
+    atention_time_total = models.IntegerField(default=0)
+    atention_count = models.IntegerField(default=0)
     attention_channels = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=255, default='')
 
@@ -76,6 +77,16 @@ class AtentionQueue(models.Model):
     def get_patient(self, patient_id):
         return Patient.objects.filter(queue=self.id).get(pk=patient_id)
 
+    def _get_average_wait_time(self):
+        if self.atention_count == 0:
+            return 600
+        return float(self.atention_time_total) / self.atention_count
+
+    def update_atention_time(self, time_in_seconds):
+        self.atention_time_total += time_in_seconds
+        self.atention_count += 1
+        self.save()
+
     def get_average_wait_time(self, triage_scale=None):
         if not triage_scale:
             patients_before = len(self.patients.all())
@@ -85,8 +96,7 @@ class AtentionQueue(models.Model):
                 if patient.triageScale.max_wait_in_minutes <= triage_scale.max_wait_in_minutes:
                     patients_before += 1
 
-        return patients_before * float(self.average_attention_time) / self.attention_channels
-
+        return patients_before * self._get_average_wait_time() / self.attention_channels
 
 class Patient(models.Model):
     triageScale = models.ForeignKey(TriageScaleLevel)
@@ -206,3 +216,4 @@ class AttentionRecord(models.Model):
 
     def __str__(self):
         return '%s - %s %s %s' % (self.health_center, self.queue, self.reason, self.waitTime)
+
