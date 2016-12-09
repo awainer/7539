@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'geoposition',
     'backend',
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 
 ]
 REST_FRAMEWORK = {
@@ -48,6 +49,8 @@ REST_FRAMEWORK = {
                 }
 
 MIDDLEWARE = [
+    'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -131,3 +134,4 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import  geo_settings 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = geo_settings.api_key
+CORS_ORIGIN_ALLOW_ALL = True

@@ -8,7 +8,8 @@ from rest_framework import status
 from backend.serializers import *
 from backend.models import *
 from django.utils import timezone
-
+import dateutil.parser
+from django.http import HttpResponse
 
 class HealthCenterViewSet(viewsets.ModelViewSet):
     queryset = HealthCenter.objects.all()
@@ -124,3 +125,27 @@ class RecommendationEngineViewSet(viewsets.ModelViewSet):
         return Response(recommendation_list)
 
 
+class SpecialtyViewSet(viewsets.ModelViewSet):
+    queryset = Specialty.objects.all()
+    serializer_class = SpecialtySerializer
+
+class TriageScaleLevelViewSet(viewsets.ModelViewSet):
+    queryset = TriageScaleLevel.objects.all()
+    serializer_class = TriageScaleLevelSerializer
+
+class ReportsViewSet(viewsets.ModelViewSet):
+    queryset = Reports.objects.all()
+    def get_attention_per_hour(self, request, hc_id=None):
+        parsed_date_from = dateutil.parser.parse(request.GET.get('date_from'))
+        parsed_date_to = dateutil.parser.parse(request.GET.get('date_to'))
+        result = Reports.attention_per_hour(hc_id, parsed_date_from, parsed_date_to)
+        #response_data = {}
+        #response_data['data'] = [ str(x) for x in result ]
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
+#        serialized_result = []
+#        for record in result:
+#            record_serializer = AtentionRecordSerializer(record)
+#            serialized_result.append(record_serializer.data)
+#        print(serialized_result)
+#        return Response(serialized_result)

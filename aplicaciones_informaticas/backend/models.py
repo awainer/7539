@@ -2,7 +2,7 @@ from django.db import models
 from geoposition.fields import GeopositionField
 from decimal import Decimal
 from backend import geo_distance
-
+import math
 
 # Create your models here.
 
@@ -58,6 +58,7 @@ class AtentionQueue(models.Model):
     atention_count = models.IntegerField(default=0)
     attention_channels = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=255, default='')
+    max_capacity = models.PositiveIntegerField(default=10)
 
     def __str__(self):
         return  '%s - %s - %s' % (self.description,
@@ -217,3 +218,36 @@ class AttentionRecord(models.Model):
     def __str__(self):
         return '%s - %s %s %s' % (self.health_center, self.queue, self.reason, self.waitTime)
 
+
+class Reports(models.Model):
+
+    def attention_per_hour(hc_id, date_from, date_to):
+
+        days_in_report = (date_to - date_from).days
+        if days_in_report == 0:
+            days_in_report = 1
+
+        qs = AttentionRecord.objects.filter(health_center=hc_id, startTime__range=[date_from, date_to])
+        response_data = {}
+        response_data['data'] = []
+
+        specialties = set()
+
+        for record in qs:
+            specialties.add(record.queue.specialty.id)
+        print(len(qs))
+
+        for specialty in specialties:
+
+            capacity = 0
+            for queue in AtentionQueue.objects.filter(health_center=hc_id, specialty=specialty):
+                capacity += queue.max_capacity
+            patients_per_hour = {x: 0 for x in range(24)}
+            for record in qs:
+                queue = record.queue
+                if queue.specialty.id == specialty:
+                    patients_per_hour[record.startTime.hour] += 1
+            for hour in patients_per_hour:
+                patients_per_hour[hour] = math.ceil(patients_per_hour[hour] / days_in_report)
+            response_data['data'].append({'specialty': specialty, 'capacity': capacity, 'patients_per_hour': patients_per_hour})
+        return response_data

@@ -24,6 +24,8 @@ admin.autodiscover()
 router = routers.DefaultRouter()
 router.register(r'healthcenters', views.HealthCenterViewSet)
 router.register(r'queues', views.AtentionQueueViewSet)
+router.register(r'specialties', views.SpecialtyViewSet, base_name='Specialty')
+router.register(r'triagescalelevel', views.TriageScaleLevelViewSet, base_name='TriageScaleLevel')
 
 #/hospitals/{idHospital}/queue/{idQueue}/patients
 #/hospitals/{idHospital}/queues/{idQueue}/patients/{idPatient}:
@@ -36,7 +38,8 @@ urlpatterns = [
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?/(?P<patient_id>\d+)$',
                         views.AtentionQueueViewSet.as_view({'get': 'get_patient','delete':'delete_patient'})),
     url(r'^api/v1/hospitals/recommendation',views.RecommendationEngineViewSet.as_view({'post':'get_recommendation'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate', views.HealthCenterViewSet.as_view({'post':'rate'}))
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate', views.HealthCenterViewSet.as_view({'post':'rate'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/statistics/attention_per_hour', views.ReportsViewSet.as_view({'get':'get_attention_per_hour'}))
 #    url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 

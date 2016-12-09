@@ -5,11 +5,11 @@ from rest_framework import serializers
 class AtentionQueueSerializer(serializers.ModelSerializer):
     wait_time = serializers.ReadOnlyField(source='get_average_wait_time')
     size = serializers.ReadOnlyField()
-
+    health_center_name = serializers.ReadOnlyField(source='health_center.name')
     class Meta:
         model = AtentionQueue
-        fields = ('id', 'specialty', 'description', 'health_center', 'wait_time', 'size', 'atention_count',
-        'atention_time_total')
+        fields = ('id', 'specialty', 'description', 'health_center','health_center_name', 'wait_time', 'size', 'atention_count',
+        'atention_time_total','max_capacity')
 
 
 class HealthCenterSerializer(serializers.ModelSerializer):
@@ -42,3 +42,14 @@ class AtentionRecordSerializer(serializers.ModelSerializer):
         model = AttentionRecord
         fields = '__all__'
 
+class SpecialtySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Specialty
+        fields = '__all__'
+
+class TriageScaleLevelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TriageScaleLevel
+        fields = '__all__'
