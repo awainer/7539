@@ -6,6 +6,7 @@ import math
 
 # Create your models here.
 
+
 class HealthCenter(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
@@ -98,6 +99,7 @@ class AtentionQueue(models.Model):
                     patients_before += 1
 
         return patients_before * self._get_average_wait_time() / self.attention_channels
+
 
 class Patient(models.Model):
     triageScale = models.ForeignKey(TriageScaleLevel)
@@ -219,6 +221,14 @@ class AttentionRecord(models.Model):
         return '%s - %s %s %s' % (self.health_center, self.queue, self.reason, self.waitTime)
 
 
+class UpcomingPatientFeedMessage(models.Model):
+    health_center = models.ForeignKey(HealthCenter, on_delete=models.CASCADE)
+    queue = models.ForeignKey(AtentionQueue, on_delete=models.CASCADE)
+    triageScale = models.ForeignKey(TriageScaleLevel)
+    eta = models.DateTimeField()
+    message_delivered = models.BooleanField(default=False)
+
+
 class Reports(models.Model):
 
     def attention_per_hour(hc_id, date_from, date_to):
@@ -235,10 +245,8 @@ class Reports(models.Model):
 
         for record in qs:
             specialties.add(record.queue.specialty.id)
-        print(len(qs))
 
         for specialty in specialties:
-
             capacity = 0
             for queue in AtentionQueue.objects.filter(health_center=hc_id, specialty=specialty):
                 capacity += queue.max_capacity
@@ -249,5 +257,25 @@ class Reports(models.Model):
                     patients_per_hour[record.startTime.hour] += 1
             for hour in patients_per_hour:
                 patients_per_hour[hour] = math.ceil(patients_per_hour[hour] / days_in_report)
-            response_data['data'].append({'specialty': specialty, 'capacity': capacity, 'patients_per_hour': patients_per_hour})
+            response_data['data'].append({'specialty': specialty,
+                                          'capacity': capacity,
+                                          'patients_per_hour': patients_per_hour})
         return response_data
+
+    def attention_per_hour_all_healthcenters(date_from, date_to):
+        response_data = {'data': []}
+        for hc in HealthCenter.objects.all():
+            response_data['data'].append({
+                                  "healthcenter": hc.name,
+                                  "data": Reports.attention_per_hour(hc.id, date_from, date_to)['data']
+                                })
+        return response_data
+
+    def get_upcoming_patients_feed(id_hospital, mark_as_read=True):
+        result = UpcomingPatientFeedMessage.objects.filter(health_center=id_hospital, message_delivered=False)
+        if mark_as_read:
+            for message in result:
+                message.message_delivered = True
+                message.save()
+
+        return result

@@ -46,6 +46,38 @@ paths:
             items:
               $ref: "#/definitions/HospitalRecommendation"
 
+  /hospitals/recommendation/select/{idHospital}/queue/{idQueue}/
+    post:
+      description: |
+        Acepta la recomendación ofrecida por el sistema y notifica al centro de salud.
+      paramenters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+        -
+          name: idQueue
+          in: path
+          description: ID de la cola.
+          required: true
+          type: integer
+        -
+          name: triageScale
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TriageScale"
+        -
+          name: eta
+          in: body
+          required: true
+          description: estimated time of arrival in iso 8601 format
+      responses:
+        200:
+          description: Centro de salud notificado
+
   /hospitals/{idHospital}/queue/{idQueue}/patients:
     post:
       description: |
@@ -81,6 +113,19 @@ paths:
               waitTime: 60
               startTime: "2011-08-30T13:22:53.108Z"
               endTime: ""
+  /hospitals/{idHospital}/feed
+    get:
+      description: "Obtiene el feed de los pacientes en camino"
+      parameters:
+        -
+          name: idHospital
+          in: path
+          description: ID del hospital.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Consulta exitosa, lista de eventos.
 
   /hospitals/{idHospital}/queues/{idQueue}/patients/{idPatient}:
     get:

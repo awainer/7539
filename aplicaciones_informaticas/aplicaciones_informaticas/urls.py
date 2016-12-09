@@ -27,19 +27,28 @@ router.register(r'queues', views.AtentionQueueViewSet)
 router.register(r'specialties', views.SpecialtyViewSet, base_name='Specialty')
 router.register(r'triagescalelevel', views.TriageScaleLevelViewSet, base_name='TriageScaleLevel')
 
-#/hospitals/{idHospital}/queue/{idQueue}/patients
-#/hospitals/{idHospital}/queues/{idQueue}/patients/{idPatient}:
+
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/(?P<queue_id>\d+)$', views.AtentionQueueViewSet.as_view({'get': 'get_one_for_hc'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/?$', views.AtentionQueueViewSet.as_view({'get': 'get_all_for_hc'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?$',views.AtentionQueueViewSet.as_view({'post': 'add_patient', 'get': 'get_all_patients'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/(?P<queue_id>\d+)$',
+                views.AtentionQueueViewSet.as_view({'get': 'get_one_for_hc'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queues/?$',
+                views.AtentionQueueViewSet.as_view({'get': 'get_all_for_hc'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?$',
+                views.AtentionQueueViewSet.as_view({'post': 'add_patient', 'get': 'get_all_patients'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/patients?/(?P<patient_id>\d+)$',
-                        views.AtentionQueueViewSet.as_view({'get': 'get_patient','delete':'delete_patient'})),
-    url(r'^api/v1/hospitals/recommendation',views.RecommendationEngineViewSet.as_view({'post':'get_recommendation'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate', views.HealthCenterViewSet.as_view({'post':'rate'})),
-    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/statistics/attention_per_hour', views.ReportsViewSet.as_view({'get':'get_attention_per_hour'}))
-#    url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework'))
+                views.AtentionQueueViewSet.as_view({'get': 'get_patient', 'delete':'delete_patient'})),
+    url(r'^api/v1/hospitals/recommendation$',
+                views.RecommendationEngineViewSet.as_view({'post':'get_recommendation'})),
+    url(r'^api/v1/hospitals/recommendation/select/(?P<hc_id>[-\w]+)/queue/(?P<queue_id>\d+)/',
+                views.RecommendationEngineViewSet.as_view({'post':'select_recommendation'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate',
+                views.HealthCenterViewSet.as_view({'post':'rate'})),
+    url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/feed',
+                views.ReportsViewSet.as_view({'get':'get_feed'})),
+    url(r'^api/v1/hospitals/statistics/attention_per_hour',
+                views.ReportsViewSet.as_view({'get':'get_attention_per_hour'})),
+
 ]
 

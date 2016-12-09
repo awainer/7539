@@ -53,3 +53,10 @@ class TriageScaleLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = TriageScaleLevel
         fields = '__all__'
+
+
+class UpcomingPatientFeedMessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UpcomingPatientFeedMessage
+        fields = '__all__'

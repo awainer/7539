@@ -124,28 +124,45 @@ class RecommendationEngineViewSet(viewsets.ModelViewSet):
             recommendation_list.append(recommendation_serializer.data)
         return Response(recommendation_list)
 
+    def select_recommendation(self, request, hc_id=None, queue_id=None):
+        json_data = json.loads(request.body.decode('utf-8'))
+        triageScale = TriageScaleLevel.objects.get(pk=json_data['triageScale'])
+        eta = dateutil.parser.parse(json_data['eta'])
+        notification = UpcomingPatientFeedMessage(health_center=HealthCenter.objects.get(pk=hc_id),
+                                                  queue=AtentionQueue.objects.get(pk=queue_id),
+                                                  triageScale=triageScale,
+                                                  eta=eta)
+        notification.save()
+        response_data = json.dumps({"status": "Success."})
+        return HttpResponse(response_data, content_type="application/json")
+
 
 class SpecialtyViewSet(viewsets.ModelViewSet):
     queryset = Specialty.objects.all()
     serializer_class = SpecialtySerializer
 
+
 class TriageScaleLevelViewSet(viewsets.ModelViewSet):
     queryset = TriageScaleLevel.objects.all()
     serializer_class = TriageScaleLevelSerializer
 
+
 class ReportsViewSet(viewsets.ModelViewSet):
     queryset = Reports.objects.all()
-    def get_attention_per_hour(self, request, hc_id=None):
+
+    def get_attention_per_hour(self, request):
         parsed_date_from = dateutil.parser.parse(request.GET.get('date_from'))
         parsed_date_to = dateutil.parser.parse(request.GET.get('date_to'))
-        result = Reports.attention_per_hour(hc_id, parsed_date_from, parsed_date_to)
-        #response_data = {}
-        #response_data['data'] = [ str(x) for x in result ]
+        if 'hc_id' in request.GET:
+            result = Reports.attention_per_hour(request.GET.get('hc_id'), parsed_date_from, parsed_date_to)
+            return HttpResponse(json.dumps(result), content_type="application/json")
+
+        result = Reports.attention_per_hour_all_healthcenters(parsed_date_from, parsed_date_to)
         return HttpResponse(json.dumps(result), content_type="application/json")
 
-#        serialized_result = []
-#        for record in result:
-#            record_serializer = AtentionRecordSerializer(record)
-#            serialized_result.append(record_serializer.data)
-#        print(serialized_result)
-#        return Response(serialized_result)
+    def get_feed(self, request, hc_id=None):
+        result = []
+        for message in Reports.get_upcoming_patients_feed(hc_id):
+            message_serializer = UpcomingPatientFeedMessageSerializer(message)
+            result.append(message_serializer.data)
+        return Response(result)

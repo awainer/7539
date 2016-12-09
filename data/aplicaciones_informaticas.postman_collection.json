@@ -20,8 +20,87 @@
 					}
 				],
 				"body": {
-					"mode": "raw",
-					"raw": "{ \n   \"latitude\": -34.617599,\n   \"longitude\": -58.368157,\n   \"specialty\": 3\n}"
+					"mode": "formdata",
+					"formdata": [
+						"{",
+						" ",
+						"\n",
+						" ",
+						" ",
+						" ",
+						"\"",
+						"l",
+						"a",
+						"t",
+						"i",
+						"t",
+						"u",
+						"d",
+						"e",
+						"\"",
+						":",
+						" ",
+						"-",
+						"3",
+						"4",
+						".",
+						"6",
+						"1",
+						"7",
+						"5",
+						"9",
+						"9",
+						",",
+						"\n",
+						" ",
+						" ",
+						" ",
+						"\"",
+						"l",
+						"o",
+						"n",
+						"g",
+						"i",
+						"t",
+						"u",
+						"d",
+						"e",
+						"\"",
+						":",
+						" ",
+						"-",
+						"5",
+						"8",
+						".",
+						"3",
+						"6",
+						"8",
+						"1",
+						"5",
+						"7",
+						",",
+						"\n",
+						" ",
+						" ",
+						" ",
+						"\"",
+						"s",
+						"p",
+						"e",
+						"c",
+						"i",
+						"a",
+						"l",
+						"t",
+						"y",
+						"\"",
+						":",
+						" ",
+						"2",
+						"\n",
+						"\n",
+						"}"
+					]
 				},
 				"description": ""
 			},
@@ -30,7 +109,7 @@
 		{
 			"name": "Nuevo paciente en Garrahan",
 			"request": {
-				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients",
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/38/queue/5/patients",
 				"method": "POST",
 				"header": [
 					{
@@ -40,8 +119,30 @@
 					}
 				],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"triageScale\": 4\n}"
+					"mode": "formdata",
+					"formdata": [
+						"{",
+						"\n",
+						"\t",
+						"\"",
+						"t",
+						"r",
+						"i",
+						"a",
+						"g",
+						"e",
+						"S",
+						"c",
+						"a",
+						"l",
+						"e",
+						"\"",
+						":",
+						" ",
+						"4",
+						"\n",
+						"}"
+					]
 				},
 				"description": ""
 			},
@@ -50,7 +151,7 @@
 		{
 			"name": "Pacientes en una cola",
 			"request": {
-				"url": "http://192.168.5.20:8000/api/v1/hospitals/72/queue/16/patients",
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/38/queue/5/patients",
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -124,6 +225,68 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\"rating\": 3}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "All queues for a healthcenter",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/38/queues/",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Avg patients per hour, one healthcenter",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/38/statistics/attention_per_hour?date_from=2016-11-25T14:48:00.000Z&date_to=2017-12-05T14:48:00.000Z",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Avg patients per hour, all healthcenters",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/statistics/attention_per_hour?date_from=2016-11-25T14:48:00.000Z&date_to=2017-12-05T14:48:00.000Z&hc_id=38",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Accept recommendation",
+			"request": {
+				"url": "http://192.168.5.20:8000/api/v1/hospitals/recommendation/select/38/queue/5/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"triageScale\": 4,\n\t\"eta\": \"2016-12-10T15:34:57.212943\"\n}"
 				},
 				"description": ""
 			},
