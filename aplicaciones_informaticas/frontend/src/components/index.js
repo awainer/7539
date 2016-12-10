@@ -1,9 +1,7 @@
 import Recommendation from './Recommendation';
-import GeneralStatistics from './GeneralStatistics';
-import HospitalStatistics from './HospitalStatistics';
+import Statistics from './Statistics';
 
-export default {
+export {
   Recommendation,
-  GeneralStatistics,
-  HospitalStatistics,
+  Statistics,
 };
