@@ -7,7 +7,7 @@ import styles from './styles.css';
 
 class RecommendationItems extends Component {
 
-  getListItem (item) {
+  getListItem (item, selectItem) {
     const itemContent = (
       <div className={styles.itemContent}>
         <div className={styles.contentTitle}>
@@ -46,6 +46,7 @@ class RecommendationItems extends Component {
     return (
       <ListItem
         key={item.id}
+        onClick={() => selectItem(item)}
         className={styles.recommendation}
         avatar='https://s3-eu-west-1.amazonaws.com/nusdigital/group/images/99/medium/Red_Cross.png'
         itemContent={itemContent}
@@ -55,7 +56,7 @@ class RecommendationItems extends Component {
   }
 
   render () {
-    const { items } = this.props;
+    const { items, selectItem } = this.props;
     return (
       <List
         className={styles.recommendationItems}
@@ -64,7 +65,7 @@ class RecommendationItems extends Component {
       >
         <ListSubHeader caption='Recomendaciones' />
         {
-          (items || []).map(item => this.getListItem(item))
+          (items || []).map(item => this.getListItem(item, selectItem))
         }
       </List>
     )

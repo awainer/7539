@@ -19,24 +19,42 @@ const triageScale = [
 
 const recommendationService = {
 
-  getSpecialties() {
+  getSpecialties () {
     return new Promise((resolve, reject) => resolve(specialties));
   },
 
-  getTriageScales() {
+  getTriageScales () {
     return new Promise((resolve, reject) => resolve(triageScale));
   },
 
   getRecommendation (recommendationOptions) {
-    var options = {
+    const options = {
       method: 'POST',
       mode: 'cors',
       body: JSON.stringify(recommendationOptions),
     };
 
     return fetch(baseUri, options)
-      .then(result => result.json())
+      .then(result => result.json());
   },
+
+  acceptRecommendation (recommendation, triageScale) {
+    const eta = new Date(); // now
+    eta.setSeconds(new Date().getSeconds() + recommendation.travelTime + recommendation.waitTime);
+
+    const options = {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify({
+        triageScale: 1,
+        eta: eta.toISOString()
+      }),
+    };
+
+    const url = baseUri + `/select/${recommendation.hc_id}/queue/${recommendation.queue_id}/`;
+    return fetch(url, options)
+      .then(result => result.json());
+  }
 };
 
 export default recommendationService;
