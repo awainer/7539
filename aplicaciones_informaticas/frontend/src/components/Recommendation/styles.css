@@ -1,5 +1,6 @@
-.recommendation {
+.recommendations {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -16,4 +17,8 @@
     margin-top: 15px;
     margin-left: 5px;
   }
+}
+
+.recommendation {
+  text-transform: capitalize;
 }

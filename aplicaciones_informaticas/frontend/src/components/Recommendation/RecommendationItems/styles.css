@@ -1,0 +1,32 @@
+.recommendationItems {
+
+}
+
+.recommendation {
+  font-size: 13px;
+}
+
+.ratingStar {
+  font-size: 21px;
+}
+
+.highlight {
+  color: #ffb400;
+}
+
+.contentTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentBody {
+  font-size: 10px;
+}
+
+.chipText {
+  margin-right: 5px;
+}
+
+.itemContent {
+  flex: 1;
+}

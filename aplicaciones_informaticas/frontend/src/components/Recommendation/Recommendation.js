@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { geolocationService, recommendationService } from '../../services';
+import RecommendationItems from './RecommendationItems';
 
 import { Button } from 'react-toolbox/lib/button';
 import Dropdown from 'react-toolbox/lib/dropdown';
 import Input from 'react-toolbox/lib/input';
 
-import styles from './Recommendation.css';
+import styles from './styles.css';
 
 class Recommendation extends Component {
 
@@ -66,7 +67,7 @@ class Recommendation extends Component {
 
   render () {
     return (
-      <div className={styles.recommendation}>
+      <div className={styles.recommendations}>
 
         <div className={styles.recommendationForm}>
           <div className="specialties">
@@ -122,12 +123,15 @@ class Recommendation extends Component {
             onClick={this.getRecommendation}
           />
         </div>
-
         <div className={styles.recommendationResults}>
         {
-          this.state.recommendationResults.map(result => (
-           <p>{result.name}</p>
-          ))
+          this.state.recommendationResults.length ?
+            (
+              <RecommendationItems
+                items={this.state.recommendationResults}
+              />
+            )
+            : ''
         }
         </div>
       </div>
