@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import { geolocationService, recommendationService } from '../../services';
+import RecommendationItems from './RecommendationItems';
 
 import { Button } from 'react-toolbox/lib/button';
 import Dropdown from 'react-toolbox/lib/dropdown';
 import Input from 'react-toolbox/lib/input';
+import Snackbar from 'react-toolbox/lib/snackbar';
 
-import styles from './Recommendation.css';
+
+import styles from './styles.css';
 
 class Recommendation extends Component {
 
   constructor (props) {
     super(props);
-    this.state = { specialties: [], triageScales: [], recommendationResults: [], selectedGeo: { latitude: -34.63, longitude: -58.48} };
+    this.state = {
+      specialties: [],
+      triageScales: [],
+      recommendationResults: [],
+      selectedGeo: { latitude: -34.63, longitude: -58.48},
+      snackbarActive: false
+    };
 
     this.handleSpecialtyChange = this.handleSpecialtyChange.bind(this);
     this.handleTriageScaleChange = this.handleTriageScaleChange.bind(this);
@@ -20,6 +29,8 @@ class Recommendation extends Component {
 
     this.getRecommendation = this.getRecommendation.bind(this);
     this.calculateGeo = this.calculateGeo.bind(this);
+    this.selectHospital = this.selectHospital.bind(this);
+    this.dismissSidebar = this.dismissSidebar.bind(this);
   }
 
   componentDidMount () {
@@ -64,9 +75,18 @@ class Recommendation extends Component {
       .then((results) => this.setState({ recommendationResults: results }));
   }
 
+  selectHospital (item) {
+    return recommendationService.acceptRecommendation(item, this.state.selectedTriageScaleId)
+      .then(() => this.setState({ snackbarActive: true, recommendationResults: [] }));
+  }
+
+  dismissSidebar () {
+    this.setState({ snackbarActive: false });
+  }
+
   render () {
     return (
-      <div className={styles.recommendation}>
+      <div className={styles.recommendations}>
 
         <div className={styles.recommendationForm}>
           <div className="specialties">
@@ -122,14 +142,24 @@ class Recommendation extends Component {
             onClick={this.getRecommendation}
           />
         </div>
-
         <div className={styles.recommendationResults}>
         {
-          this.state.recommendationResults.map(result => (
-           <p>{result.name}</p>
-          ))
+          this.state.recommendationResults.length ?
+            (
+              <RecommendationItems
+                items={this.state.recommendationResults}
+                selectItem={this.selectHospital}
+              />
+            )
+            : ''
         }
         </div>
+        <Snackbar
+          active={this.state.snackbarActive}
+          label="El hospital ha sido notificado su ingreso."
+          timeout={2000}
+          onTimeout={this.dismissSidebar}
+        />
       </div>
     );
   }

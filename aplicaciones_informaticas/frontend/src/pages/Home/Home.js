@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Recommendation, Statistics } from '../../components';
+import { Recommendation, Feed, Statistics } from '../../components';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 
 class Home extends Component {
@@ -26,6 +26,9 @@ class Home extends Component {
         <Tabs index={this.state.tabIndex} onChange={this.handleFixedTabChange} fixed>
           <Tab label="Recomendación de Hospitales">
             <Recommendation />
+          </Tab>
+          <Tab label="Feed">
+            <Feed />
           </Tab>
           <Tab label="Estadísticas">
             <Statistics />
