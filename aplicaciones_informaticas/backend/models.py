@@ -146,7 +146,8 @@ class RecommendationData(models.Model):
     patientsWaiting = models.PositiveIntegerField(default=0)
     distance = models.PositiveIntegerField(default=0)
     ranking = models.FloatField()
-    sector = models.CharField(max_length=50)
+    queue_id = models.IntegerField(default=0)
+    hc_id = models.IntegerField(default=0)
 
 
 class RecommendationEngine(models.Model):
@@ -179,14 +180,16 @@ class RecommendationEngine(models.Model):
             (latitude, longitude), (float(healthcenter.position.latitude),
              float(healthcenter.position.longitude)))
 
-        recdata = RecommendationData(name=healthcenter.name,
-                                     address=healthcenter.address,
+        recdata = RecommendationData(id=queue.id,
+                                     name=healthcenter.name.title(),
+                                     address=healthcenter.address.title(),
                                      waitTime=queue.get_average_wait_time(triage_scale=triage_scale),
                                      travelTime=travel_time,
                                      patientsWaiting=queue.size(max_triage_scale=triage_scale),
                                      distance=travel_distance,
                                      ranking=healthcenter.get_ranking(),
-                                     sector=str(queue))
+                                     queue_id=queue.id,
+                                     hc_id=healthcenter.id)
         return recdata
 
     def get_random_recommendation():
