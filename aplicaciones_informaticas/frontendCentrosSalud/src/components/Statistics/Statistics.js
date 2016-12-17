@@ -1,16 +1,35 @@
 import React, { Component } from 'react';
+import { feedService, hospitalService } from '../../services';
+import Dropdown from 'react-toolbox/lib/dropdown';
 
 class Statistics extends Component {
 
-  constructor(){
+  constructor(props){
 	  super(props);
 	  this.state = { healthCenters: [] };
-	  this.handleHealthcenterChange = this.handleHealthcenterChange.bind(this);	      
+	  this.handleHealthcenterChange = this.handleHealthcenterChange.bind(this);
   }
+
+
+  componentDidMount () {
+    hospitalService.getHospitals()
+      .then(result => this.setState({ healthCenters: result.results }));
+  }
+
+  handleHealthcenterChange (value) {
+    const retrieveFeed = () => {
+      return feedService.getFeed(value)
+      .then(result => {
+        const timerId = setTimeout(retrieveFeed, 2000);
+        const newResult = [].concat(result, this.state.feedResults);
+        this.setState({ timerId, feedResults: newResult });
+      });
+    };
+  }
+
   render () {
     return (
       <div className="rate">
-        statistics!
         <Dropdown
           auto
           allowBlank={true}
@@ -22,20 +41,6 @@ class Statistics extends Component {
     );
   }
 }
-
-componentDidMount () {
-    hospitalService.getHospitals()
-      .then(result => this.setState({ healthCenters: result.results }));
-  }
-handleHealthcenterChange (value) {
-const retrieveFeed = () => {
-  return feedService.getFeed(value)
-	.then(result => {
-	  const timerId = setTimeout(retrieveFeed, 2000);
-	  const newResult = [].concat(result, this.state.feedResults);
-	  this.setState({ timerId, feedResults: newResult });
-	});
-};
 export default Statistics;
 
 
