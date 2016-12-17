@@ -45,6 +45,8 @@ urlpatterns = [
                 views.RecommendationEngineViewSet.as_view({'post':'select_recommendation'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/rate',
                 views.HealthCenterViewSet.as_view({'post':'rate'})),
+    url(r'^api/v1/hospitals/avg',
+                views.HealthCenterViewSet.as_view({'get':'get_average_wait'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/feed',
                 views.ReportsViewSet.as_view({'get':'get_feed'})),
     url(r'^api/v1/hospitals/statistics/attention_per_hour',

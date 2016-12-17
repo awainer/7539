@@ -32,6 +32,12 @@ class HealthCenter(models.Model):
     def __str__(self):
         return self.name
 
+    def get_wait_time_average(self):
+        sum = 0
+        for queue in AtentionQueue.objects.filter(health_center=self):
+            sum += queue.get_average_wait_time()
+        avg = round(sum / len(AtentionQueue.objects.filter(health_center=self)) / 60)
+        return   avg
 
 class Specialty(models.Model):
     name = models.CharField(max_length=255)

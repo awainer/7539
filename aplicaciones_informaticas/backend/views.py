@@ -1,4 +1,4 @@
-
+import math
 import json
 import datetime
 
@@ -26,6 +26,21 @@ class HealthCenterViewSet(viewsets.ModelViewSet):
         hc = HealthCenter.objects.get(pk=hc_id)
         hc.rate(json_data['rating'])
         return Response({"success": True})
+
+    def get_average_wait(self, request):
+        result = []
+        for hc in HealthCenter.objects.all():
+            avg = hc.get_wait_time_average()
+            ranking = math.ceil(hc.get_ranking())
+            if ranking == -1:
+                ranking = "Sin calificaciones"
+            html = "<p><strong>%s</strong></p>" % hc.name.title()
+            html += "<p>Tiempo promedio de espera: %s minutos.</p>" % avg
+            html += "<p>Ranking: %s<p>" % ranking
+            data = {"id": hc.id, "html": html, "waitTime": avg}
+            result.append(data)
+
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 class AtentionQueueViewSet(viewsets.ModelViewSet):
