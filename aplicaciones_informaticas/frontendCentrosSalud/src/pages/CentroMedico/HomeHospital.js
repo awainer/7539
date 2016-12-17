@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Recommendation, Feed, Statistics } from '../../components';
+import { Feed, Statistics } from '../../components';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 
 class HomeHospital extends Component {
