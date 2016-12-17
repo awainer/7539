@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Recommendation, Scores } from '../../components';
+import { Recommendation, Scores, RealTimeMap } from '../../components';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 
 class HomePacientes extends Component {
@@ -26,6 +26,9 @@ class HomePacientes extends Component {
         <Tabs index={this.state.tabIndex} onChange={this.handleFixedTabChange} fixed>
           <Tab label="Recomendación de Hospitales">
             <Recommendation />
+          </Tab>
+          <Tab label="Mapa en Tiempo Real">
+            <RealTimeMap />
           </Tab>
           <Tab label="Calificar Centros Médicos">
             <Scores />

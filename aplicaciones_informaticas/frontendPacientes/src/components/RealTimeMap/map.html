@@ -1,0 +1,167 @@
+module.exports = function(props) {
+  return (
+<div id="map-container">
+    <div id="map"></div>
+
+
+
+
+      <script type="application/javascript">
+        BASE_URL = "http://localhost:8000";
+
+        MY_POSITION_ICON =  BASE_URL + "/static/icons/blue.png";
+
+        GREEN_ICON =  BASE_URL + "/static/icons/green.png";
+        YELLOW_ICON = BASE_URL + "/static/icons/yellow.png";
+        RED_ICON = BASE_URL + "/static/icons/red.png";
+
+        hospital_markers = {};
+        var xmlhttp = new XMLHttpRequest();
+        var url =  BASE_URL + "/api/v1/healthcenters/?format=json";
+
+        function createMarkers(req,map) {
+
+            return function() {
+               if (req.readyState == 4 && req.status == 200) {
+                  console.log("request ready");
+                  var response = JSON.parse(req.responseText);
+                  for (var i = 0; i < response.count; i++ ) {
+                    latitude = parseFloat(response.results[i].position.split(',')[0]);
+                    longitude = parseFloat(response.results[i].position.split(',')[1]);
+                    var marker = new google.maps.Marker({
+                              position: {lat: latitude, lng: longitude},
+                              map: map,
+                              title: response.results[i].name,
+                              icon: YELLOW_ICON
+                            });
+                    var infowindow = new google.maps.InfoWindow();
+                    infowindow.setContent(response.results[i].name);
+                    var content = "foo";
+                     google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){
+                        return function() {
+                              infowindow.open(map,marker);
+                        };
+                    })(marker,content,infowindow));
+
+
+                    hospital_markers[response.results[i].id] = {"marker": marker, "info": infowindow, "color": "yellow"};
+                  }
+
+              }
+
+             }
+        }
+
+
+
+
+      var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+            };
+
+            function coords_success(pos) {
+              var crd = pos.coords;
+              console.log('Your current position is:');
+              console.log('Latitude : ' + crd.latitude);
+              console.log('Longitude: ' + crd.longitude);
+              console.log('More or less ' + crd.accuracy + ' meters.');
+
+            };
+
+            function error(err) {
+              console.warn('ERROR(' + err.code + '): ' + err.message);
+            };
+
+
+
+
+      var map;
+
+      function initMap() {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          coords_success(pos);
+
+
+          map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: pos.coords.latitude, lng: pos.coords.longitude},
+                    zoom: 10,
+                    disableDefaultUI: true,
+                    style: [
+                                {
+                                    featureType: "poi",
+                                    elementType: "labels",
+                                    stylers: [
+                                          { visibility: "off" }
+                                    ]
+                                }
+                            ]
+
+                });
+        xmlhttp.onreadystatechange =  createMarkers(xmlhttp,map);
+        var myPosition = new google.maps.Marker({
+          position: {lat: pos.coords.latitude, lng: pos.coords.longitude},
+          map: map,
+          title: 'Ud está aqui',
+          icon: MY_POSITION_ICON
+        });
+
+      xmlhttp.open("GET", url, true);
+      xmlhttp.send();
+
+      }, error, options);
+
+      } // fin initMap
+
+
+
+    function requestUpdateStatus(){
+      url = BASE_URL + "/api/v1/hospitals/avg";
+      var xhr = new XMLHttpRequest;
+
+
+      xhr.onreadystatechange =  function(){
+                                      if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                            update = JSON.parse(xhr.responseText)
+                                            var update_size = Object.keys(update).length;
+
+                                            for (var i=0; i < update_size; i++){
+                                                console.log(update[i]);
+                                                hospital_markers[update[i].id]['info'].setContent(update[i].html);
+                                                if (update[i].waitTime < 15 
+                                                      &&  hospital_markers[update[i].id].color != "green"){
+                                                    console.log("set verde");
+                                                    console.log(hospital_markers[update[i].id]);
+                                                    hospital_markers[update[i].id].color == "green";
+                                                    hospital_markers[update[i].id].marker.setIcon(GREEN_ICON);
+                                                }
+                                                if (update[i].waitTime >= 15 
+                                                    &&  update[i].waitTime < 45
+                                                    &&  hospital_markers[update[i].id].color != "yellow"){
+                                                  console.log("set yellow"); console.log(hospital_markers[update[i].id]);
+                                                    hospital_markers[update[i].id].color == "yellow";
+                                                    hospital_markers[update[i].id].marker.setIcon(YELLOW_ICON);
+                                                }
+                                                if (update[i].waitTime >= 45 
+                                                          &&  hospital_markers[update[i].id].color != "red"){
+                                                        console.log("set red"); console.log(hospital_markers[update[i].id]);
+                                                    hospital_markers[update[i].id].color == "red";
+                                                    hospital_markers[update[i].id].marker.setIcon(RED_ICON);
+                                                      }
+
+                                            }
+                                      }
+                                  }
+  
+      xhr.open("GET", url, true);
+      xhr.send();
+    }
+    setInterval(function(){requestUpdateStatus()},5000);
+
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWXu3jFoeDQ2qa1wI_7yVwc3Awe3UmyN0&callback=initMap"
+    async defer></script>
+</div>
+);};
