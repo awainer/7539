@@ -1,0 +1,19 @@
+.scores {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.scoreSelection {
+  min-width: 300px;
+}
+
+.scoreSelection div[data-react-toolbox="progress-bar"] {
+  left: 0;
+}
+
+button {
+  margin-top: 15px;
+  margin-left: 5px;
+}

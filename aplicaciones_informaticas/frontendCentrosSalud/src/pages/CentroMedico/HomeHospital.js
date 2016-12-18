@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Recommendation, Feed, Statistics } from '../../components';
+import { Feed, Statistics } from '../../components';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 
-class Home extends Component {
+class HomeHospital extends Component {
 
   constructor (props) {
     super(props);
@@ -22,11 +22,8 @@ class Home extends Component {
 
   render () {
     return (
-      <div className="home">
+      <div className="CentroMedico">
         <Tabs index={this.state.tabIndex} onChange={this.handleFixedTabChange} fixed>
-          <Tab label="Recomendación de Hospitales">
-            <Recommendation />
-          </Tab>
           <Tab label="Feed">
             <Feed />
           </Tab>
@@ -40,4 +37,4 @@ class Home extends Component {
 };
 
 
-export default Home;
+export default HomeHospital;

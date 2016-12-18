@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import FontIcon from 'react-toolbox/lib/font_icon';
 import styles from './index.css';
-import Home from './pages/Home';
+import Pacientes from './pages/Pacientes';
 
 class App extends Component {
   render() {
@@ -14,7 +14,7 @@ class App extends Component {
           <h3>guardiaApp</h3>
         </div>
         <div className={styles.appIntro}>
-          <Home />
+          <Pacientes />
         </div>
       </div>
     );
