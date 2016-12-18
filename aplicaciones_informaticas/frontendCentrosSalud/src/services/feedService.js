@@ -1,8 +1,8 @@
-const baseUri = 'http://192.168.5.20:8000/api/v1/hospitals'
+import { baseUri } from './constants';
 
 const feedService = {
   getFeed (hospitalId) {
-    const uri = baseUri + `/${hospitalId}/feed`;
+    const uri = baseUri + `/hospitals/${hospitalId}/feed`;
     const options = {
       method: 'GET',
       mode: 'cors',

@@ -5,7 +5,24 @@ import Dropdown from 'react-toolbox/lib/dropdown';
 
 import styles from './styles.css'
 
-class Statistics extends Component {
+let data = [
+  {
+    key: "dataSource1",
+    values: [
+      {label: "A", value: 3},
+      {label: "B", value: 4}
+    ]
+  },
+  {
+    key: "dataSource2",
+    values: [
+      {label: "X", value: 7},
+      {label: "Y", value: 8}
+    ]
+  }
+];
+
+class Feed extends Component {
 
   constructor (props) {
     super(props);
@@ -14,7 +31,6 @@ class Statistics extends Component {
   }
 
   componentDidMount () {
-
     hospitalService.getHospitals()
       .then(result => this.setState({ healthCenters: result.results }));
   }
@@ -48,6 +64,9 @@ class Statistics extends Component {
           source={this.state.healthCenters.map(item => ({ value: item.id, label: item.name }))}
           value={this.state.selectedHealthcenterId}
         />
+        <div className={styles.charts}>
+
+        </div>
         <div className={styles.items}>
           {
             this.state.feedResults.map(item => (
@@ -65,6 +84,6 @@ class Statistics extends Component {
   }
 }
 
-export default Statistics;
+export default Feed;
 
 

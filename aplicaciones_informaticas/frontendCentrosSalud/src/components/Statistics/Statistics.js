@@ -33,7 +33,7 @@ class Statistics extends Component {
         <Dropdown
           auto
           allowBlank={true}
-          label='Seleccione hospital'
+          label='Seleccione hospital!'
           source={this.state.healthCenters.map(item => ({ value: item.id, label: item.name }))}
           value={this.state.selectedHealthcenterId}
         />

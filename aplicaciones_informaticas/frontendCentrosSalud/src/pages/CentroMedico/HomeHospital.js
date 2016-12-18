@@ -2,28 +2,25 @@ import React, { Component } from 'react';
 import { Feed, Statistics } from '../../components';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 
+import styles from './HomeHospital.css';
+
 class HomeHospital extends Component {
 
   constructor (props) {
     super(props);
     this.state = { tabIndex: 0 };
 
-    this.displayComponent = this.displayComponent.bind(this);
-    this.handleFixedTabChange = this.handleFixedTabChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
-  displayComponent (component) {
-    this.setState({ componentToDisplay: component });
-  }
-
-  handleFixedTabChange (tabIndex) {
-    this.setState({ tabIndex: tabIndex });
+  handleTabChange (value) {
+    this.setState({ tabIndex: value });
   }
 
   render () {
     return (
-      <div className="CentroMedico">
-        <Tabs index={this.state.tabIndex} onChange={this.handleFixedTabChange} fixed>
+      <div className={styles.home}>
+        <Tabs index={this.state.tabIndex} onChange={this.handleTabChange} fixed>
           <Tab label="Feed">
             <Feed />
           </Tab>
