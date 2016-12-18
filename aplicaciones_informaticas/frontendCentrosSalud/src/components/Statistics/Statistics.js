@@ -40,7 +40,7 @@ class Statistics extends Component {
   }
 
   render () {
-	
+
 	let url = "http://localhost:8000/static/chart.html?hc_id=";
 	url += this.state.selectedHealthCenterId;
 	url += "&dateFrom=" + this.state.startDate.toISOString();
