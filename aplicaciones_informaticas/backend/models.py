@@ -21,9 +21,7 @@ class HealthCenter(models.Model):
     def get_ranking(self):
         if self.ratings == 0:
             return -1
-        print (self.id,self.ratings, self.score)
         result = float(self.score) / self.ratings
-        print(result)
         return result
 
     def rate(self, rate):
@@ -36,6 +34,8 @@ class HealthCenter(models.Model):
 
     def get_wait_time_average(self):
         sum = 0
+        if len(AtentionQueue.objects.filter(health_center=self)) == 0:
+            return 0
         for queue in AtentionQueue.objects.filter(health_center=self):
             sum += queue.get_average_wait_time()
         avg = round(sum / len(AtentionQueue.objects.filter(health_center=self)) / 60)
