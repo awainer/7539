@@ -1,4 +1,4 @@
-const baseUri = 'http://192.168.5.20:8000';
+const baseUri = 'http://localhost:8000';
 
 const scoreService = {
   rateHospital (rate,hospital) {

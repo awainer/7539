@@ -1,4 +1,4 @@
-const baseUri = 'http://192.168.5.20:8000/api/v1/hospitals/recommendation';
+const baseUri = 'http://localhost:8000/api/v1/hospitals/recommendation';
 
 const specialties = [
   { name: "Clínica", id: 1 },
