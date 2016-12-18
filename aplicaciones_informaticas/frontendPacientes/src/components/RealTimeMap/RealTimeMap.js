@@ -5,9 +5,9 @@ class RealTimeMap extends Component {
 
   render () {
     return (
-      <div className=''>
-        Real Time Map!
-     </div>
+        <div className="embed-container">
+        <iframe src="http://localhost:8000/static/map.html" height="500"/>
+        </div>
     );
   }
 }

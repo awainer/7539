@@ -21,8 +21,10 @@ class HealthCenter(models.Model):
     def get_ranking(self):
         if self.ratings == 0:
             return -1
-
-        return float(self.score) / self.ratings
+        print (self.id,self.ratings, self.score)
+        result = float(self.score) / self.ratings
+        print(result)
+        return result
 
     def rate(self, rate):
         self.score += rate

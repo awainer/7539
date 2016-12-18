@@ -31,7 +31,7 @@ class HealthCenterViewSet(viewsets.ModelViewSet):
         result = []
         for hc in HealthCenter.objects.all():
             avg = hc.get_wait_time_average()
-            ranking = math.ceil(hc.get_ranking())
+            ranking = round(hc.get_ranking())
             if ranking == -1:
                 ranking = "Sin calificaciones"
             html = "<p><strong>%s</strong></p>" % hc.name.title()
