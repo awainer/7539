@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
-import { hospitalService, staticsService } from '../../services';
+import { hospitalService } from '../../services';
 import Dropdown from 'react-toolbox/lib/dropdown';
 import { Button } from 'react-toolbox/lib/button';
-
-class Statistics extends Component {
-
-    constructor (props) {
-        super(props);
-        this.state = { healthCenters: [] };
-        this.handleHealthCenterChange = this.handleHealthCenterChange.bind(this);
-    }
 
 var DatePicker = require('react-datepicker');
 var moment = require('moment');
 
 require('react-datepicker/dist/react-datepicker.css');
-
 
 class Statistics extends Component {
 
@@ -28,12 +19,6 @@ class Statistics extends Component {
 
     componentDidMount () {
         hospitalService.getHospitals().then(result => this.setState({ healthCenters: result.results }));
-
-        var url = "http://localhost:8000/foo";
-        var el = document.createElement('script');
-        el.src = url.replace('<id>', this.props.embedId);
-        this.getDOMNode().appendChild(el);
-
     }
 
     handleHealthCenterChange (value) {
@@ -69,21 +54,18 @@ class Statistics extends Component {
           value={this.state.selectedHealthCenterId}
           onChange={this.handleHealthCenterChange}
         />
-        
-        <div>
-        Desde:
 
-		<DatePicker
-        selected={this.state.startDate}
-        onChange={this.handleStartDateChange} />
+        <div className="react-datepicker">
+            <DatePicker
+            selected={this.state.startDate}
+            onChange={this.handleStartDateChange}
+            />
         </div>
 
-        <div>
-        Hasta:
-
-		<DatePicker
-        selected={this.state.endDate}
-        onChange={this.handleEndDateChange} />
+        <div className="react-datepicker">
+            <DatePicker
+            selected={this.state.endDate}
+            onChange={this.handleEndDateChange} />
         </div>
 
         <Button
@@ -94,8 +76,8 @@ class Statistics extends Component {
           disabled={!this.state.selectedHealthCenterId}
           href={url}
           target="_blank"
-        />        
-      
+        />
+
       </div>
     );
   }
