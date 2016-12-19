@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import { hospitalService } from '../../services';
 import Dropdown from 'react-toolbox/lib/dropdown';
+import { Button } from 'react-toolbox/lib/button';
+
+var DatePicker = require('react-datepicker');
+var moment = require('moment');
+
+require('react-datepicker/dist/react-datepicker.css');
+
 
 class Statistics extends Component {
 
   constructor (props) {
     super(props);
-    this.state = { healthCenters: [] };
+    let currentDate = moment();
+    this.state = { healthCenters: [], startDate:currentDate, endDate:currentDate };
     this.handleHealthCenterChange = this.handleHealthCenterChange.bind(this);
   }
 
@@ -19,7 +27,24 @@ class Statistics extends Component {
     this.setState({ selectedHealthCenterId: value });
   }
 
+  handleStartDateChange (date) {
+    this.setState({
+      startDate: date
+    });
+  }
+
+  handleEndDateChange (date) {
+    this.setState({
+      endDate: date
+    });
+  }
+
   render () {
+	
+	let url = "http://localhost:8000/static/chart.html?hc_id=";
+	url += this.state.selectedHealthCenterId;
+	url += "&dateFrom=" + this.state.startDate.toISOString();
+	url += "&dateTo=" + this.state.endDate.toISOString();
 
     return (
       <div>
@@ -31,6 +56,33 @@ class Statistics extends Component {
           value={this.state.selectedHealthCenterId}
           onChange={this.handleHealthCenterChange}
         />
+        
+        <div>
+        Desde:
+
+		<DatePicker
+        selected={this.state.startDate}
+        onChange={this.handleStartDateChange} />
+        </div>
+
+        <div>
+        Hasta:
+
+		<DatePicker
+        selected={this.state.endDate}
+        onChange={this.handleEndDateChange} />
+        </div>
+
+        <Button
+          icon="inbox"
+          label='Ver Reportes'
+          raised
+          primary
+          disabled={!this.state.selectedHealthCenterId}
+          href={url}
+          target="_blank"
+        />        
+      
       </div>
     );
   }
