@@ -226,3 +226,14 @@ class ReportsViewSet(viewsets.ModelViewSet):
             totals[unidecode(row.queue.specialty.name)] += 1
         response  = [ {k: totals[k]} for k in totals ]
         return HttpResponse(json.dumps(response), content_type="application/json")
+
+    def patient_delete_reason(self, request, hc_id=None):
+            date_from = dateutil.parser.parse(request.GET.get('dateFrom'))
+            date_to = dateutil.parser.parse(request.GET.get('dateTo'))
+            rows = AttentionRecord.objects.filter(health_center=hc_id, startTime__range=[date_from, date_to])
+            totals = {'Atendido':0, 'Impaciencia':0, 'Recategorizado':0}
+            keymap = {1: 'Atendido', 2:'Recategorizado', 3:'Impaciencia'}
+            for row in rows:
+                totals[keymap[row.reason.id]] += 1
+            response  = [ {k: totals[k]} for k in totals ]
+            return HttpResponse(json.dumps(response), content_type="application/json")

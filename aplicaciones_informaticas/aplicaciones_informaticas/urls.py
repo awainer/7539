@@ -53,8 +53,10 @@ urlpatterns = [
                 views.ReportsViewSet.as_view({'get':'patient_percentage_per_specialty'})),
     url(r'^api/v1/hospitals/(?P<hc_id>[-\w]+)/feed',
                 views.ReportsViewSet.as_view({'get':'get_feed'})),
+    url(r'^api/v1/hospitals/stats/(?P<hc_id>[-\w]+)/delete_reason$',
+                views.ReportsViewSet.as_view({'get':'patient_delete_reason'})),
     url(r'^api/v1/hospitals/statistics/attention_per_hour',
-                views.ReportsViewSet.as_view({'get':'get_attention_per_hour'})),
+                views.ReportsViewSet.as_view({'get':'get_attention_per_hour'}))
 
 ]
 

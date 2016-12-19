@@ -1,7 +1,7 @@
 
 import googlemaps
 from datetime import datetime
-from . import geo_settings
+import geo_settings
 
 
 class GeoDistance():

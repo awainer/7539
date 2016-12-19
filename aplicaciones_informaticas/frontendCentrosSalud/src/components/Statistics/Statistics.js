@@ -45,7 +45,6 @@ class Statistics extends Component {
 	url += this.state.selectedHealthCenterId;
 	url += "&dateFrom=" + this.state.startDate.toISOString();
 	url += "&dateTo=" + this.state.endDate.toISOString();
-
     return (
       <div>
         <Dropdown
@@ -58,20 +57,22 @@ class Statistics extends Component {
         />
 
         <link href="http://localhost:8000/static/react-datepicker.min.css" rel="stylesheet"/>
-
+		<p>Fecha de inicio:</p>
         <div className="react-datepicker">
             <DatePicker
+            disabled={!this.state.selectedHealthCenterId}
             selected={this.state.startDate}
             onChange={this.handleStartDateChange}
             />
         </div>
-
+	    <p>Fecha de fin:</p>
         <div className="react-datepicker">
             <DatePicker
+            disabled={!this.state.selectedHealthCenterId}
             selected={this.state.endDate}
             onChange={this.handleEndDateChange} />
         </div>
-
+	<p>
         <Button
           icon="inbox"
           label='Ver Reportes'
@@ -81,7 +82,7 @@ class Statistics extends Component {
           href={url}
           target="_blank"
         />
-
+	</p>
       </div>
     );
   }

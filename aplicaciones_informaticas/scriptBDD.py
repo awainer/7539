@@ -82,7 +82,7 @@ def generar_colas(hospitales, especialidades):
 
 def generar_cola(hospital, especialidad, capacidad):
     nombre = "{} - {} - Capacidad: {}"
-    descripcion = nombre.format(hospital.name, especialidad.name, capacidad)
+    descripcion =  especialidad.name
 
     cola = AtentionQueue()
     cola.health_center = hospital
