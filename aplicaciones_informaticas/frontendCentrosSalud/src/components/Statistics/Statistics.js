@@ -6,7 +6,7 @@ import { Button } from 'react-toolbox/lib/button';
 var DatePicker = require('react-datepicker');
 var moment = require('moment');
 
-require('react-datepicker/dist/react-datepicker.css');
+import 'react-datepicker/dist/react-datepicker.css';
 
 class Statistics extends Component {
 
@@ -15,6 +15,8 @@ class Statistics extends Component {
     let currentDate = moment();
     this.state = { healthCenters: [], startDate:currentDate, endDate:currentDate };
     this.handleHealthCenterChange = this.handleHealthCenterChange.bind(this);
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handleEndDateChange = this.handleEndDateChange.bind(this);
   }
 
     componentDidMount () {
@@ -54,6 +56,8 @@ class Statistics extends Component {
           value={this.state.selectedHealthCenterId}
           onChange={this.handleHealthCenterChange}
         />
+
+        <link href="http://localhost:8000/static/react-datepicker.min.css" rel="stylesheet"/>
 
         <div className="react-datepicker">
             <DatePicker
