@@ -6,8 +6,7 @@ import { Button } from 'react-toolbox/lib/button';
 var DatePicker = require('react-datepicker');
 var moment = require('moment');
 
-require('react-datepicker/dist/react-datepicker.css');
-
+import 'react-datepicker/dist/react-datepicker.css';
 
 class Statistics extends Component {
 
@@ -16,16 +15,17 @@ class Statistics extends Component {
     let currentDate = moment();
     this.state = { healthCenters: [], startDate:currentDate, endDate:currentDate };
     this.handleHealthCenterChange = this.handleHealthCenterChange.bind(this);
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handleEndDateChange = this.handleEndDateChange.bind(this);
   }
 
-  componentDidMount () {
-    hospitalService.getHospitals()
-      .then(result => this.setState({ healthCenters: result.results }));
-  }
+    componentDidMount () {
+        hospitalService.getHospitals().then(result => this.setState({ healthCenters: result.results }));
+    }
 
-  handleHealthCenterChange (value) {
-    this.setState({ selectedHealthCenterId: value });
-  }
+    handleHealthCenterChange (value) {
+        this.setState({ selectedHealthCenterId: value });
+    }
 
   handleStartDateChange (date) {
     this.setState({
@@ -56,21 +56,20 @@ class Statistics extends Component {
           value={this.state.selectedHealthCenterId}
           onChange={this.handleHealthCenterChange}
         />
-        
-        <div>
-        Desde:
 
-		<DatePicker
-        selected={this.state.startDate}
-        onChange={this.handleStartDateChange} />
+        <link href="http://localhost:8000/static/react-datepicker.min.css" rel="stylesheet"/>
+
+        <div className="react-datepicker">
+            <DatePicker
+            selected={this.state.startDate}
+            onChange={this.handleStartDateChange}
+            />
         </div>
 
-        <div>
-        Hasta:
-
-		<DatePicker
-        selected={this.state.endDate}
-        onChange={this.handleEndDateChange} />
+        <div className="react-datepicker">
+            <DatePicker
+            selected={this.state.endDate}
+            onChange={this.handleEndDateChange} />
         </div>
 
         <Button
@@ -81,8 +80,8 @@ class Statistics extends Component {
           disabled={!this.state.selectedHealthCenterId}
           href={url}
           target="_blank"
-        />        
-      
+        />
+
       </div>
     );
   }

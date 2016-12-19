@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link href="https://cdn.bootcss.com/c3/0.4.11/c3.min.css" rel="stylesheet" type="text/css"/>
+<script src="http://d3js.org/d3.v3.js"/></script>
+<script  src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.js"/></script>
+<div id="chart1"></div>
+<div id="chart2"></div>
+
+<script>
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+</script>
+
+
+
+<script>
+    var hc_id = getParameterByName("hc_id");
+    var dateFrom = getParameterByName("dateFrom");
+    var dateTo = getParameterByName("dateTo");
+    console.log(hc_id);
+    var chart = c3.generate({
+        bindto: "#chart1",
+        data: {
+            url: "http://localhost:8000/api/v1/hospitals/stats/" + hc_id + "/count?dateFrom=" + dateFrom + "&dateTo=" + dateTo,
+            mimeType: 'json',
+            keys: {
+                x: 'date',
+                value: ['count']
+            }
+        },
+          axis: {
+                x: {
+                    type: 'timeseries',
+                    tick: {
+                        format: '%Y-%m-%d'
+                    }
+                }
+           },
+        title: {
+          text: 'Pacientes por dia'
+        }
+    });
+
+
+chart = c3.generate({
+    bindto: "#chart2",
+    data: {
+        url: "http://localhost:8000/api/v1/hospitals/stats/" + hc_id + "/count/per_specialty?dateFrom=" + dateFrom + "&dateTo=" + dateTo,
+        mimeType: 'json',
+        keys: {
+            value: ['Clinica', 'Pediatria', 'Odontologia', 'Cirugia', 'Traumatologia', 'Oftalmologia'],
+        },
+        type:'pie'
+    },
+});
+
+
+</script>
+</body>
+</html>

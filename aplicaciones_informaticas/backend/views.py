@@ -1,7 +1,8 @@
 import math
 import json
 import datetime
-
+import itertools
+from unidecode import unidecode
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,6 +11,7 @@ from backend.models import *
 from django.utils import timezone
 import dateutil.parser
 from django.http import HttpResponse
+
 
 class HealthCenterViewSet(viewsets.ModelViewSet):
     queryset = HealthCenter.objects.all()
@@ -41,6 +43,22 @@ class HealthCenterViewSet(viewsets.ModelViewSet):
             result.append(data)
 
         return HttpResponse(json.dumps(result), content_type="application/json")
+
+    def patient_count_stats(self, request, hc_id=None):
+        date_from = dateutil.parser.parse(request.GET.get('dateFrom'))
+        date_to = dateutil.parser.parse(request.GET.get('dateTo'))
+        rows = AttentionRecord.objects.filter(health_center=hc_id, startTime__range=[date_from, date_to])
+        result = {}
+
+        for record in rows:
+            date = record.startTime.date().isoformat()
+            if date in result:
+                result[date] += 1
+            else:
+                result[date] = 1
+        response = [ {"date": k, "count": result[k]}  for k in result ]
+
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 class AtentionQueueViewSet(viewsets.ModelViewSet):
@@ -181,3 +199,30 @@ class ReportsViewSet(viewsets.ModelViewSet):
             message_serializer = UpcomingPatientFeedMessageSerializer(message)
             result.append(message_serializer.data)
         return Response(result)
+
+    def patient_count_stats(self, request, hc_id=None):
+        date_from = dateutil.parser.parse(request.GET.get('dateFrom'))
+        date_to = dateutil.parser.parse(request.GET.get('dateTo'))
+        rows = AttentionRecord.objects.filter(health_center=hc_id, startTime__range=[date_from, date_to])
+        result = {}
+
+        for record in rows:
+            date = record.startTime.date().isoformat()
+            if date in result:
+                result[date] += 1
+            else:
+                result[date] = 1
+        response = [ {"date": k, "count": result[k]}  for k in result ]
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+    def patient_percentage_per_specialty(self, request, hc_id=None):
+        date_from = dateutil.parser.parse(request.GET.get('dateFrom'))
+        date_to = dateutil.parser.parse(request.GET.get('dateTo'))
+        rows = AttentionRecord.objects.filter(health_center=hc_id, startTime__range=[date_from, date_to])
+        totals = {}
+        for specialty in Specialty.objects.all():
+            totals[unidecode(specialty.name)] = 0
+        for row in rows:
+            totals[unidecode(row.queue.specialty.name)] += 1
+        response  = [ {k: totals[k]} for k in totals ]
+        return HttpResponse(json.dumps(response), content_type="application/json")
